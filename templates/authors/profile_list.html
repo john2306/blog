@@ -1,0 +1,87 @@
+{% extends 'base.html' %} {% load static %} {% load crispy_forms_tags %} {%block title%}Autores{%endblock title%} {%block header%}
+<!-- Page Header -->
+<style>
+    header.masthead .site-heading {
+        padding: 5px 0 52px;
+        color: #fff
+    }
+</style>
+
+<header class="masthead" style="background-image: url({% block imagen%}{% static 'img/navbar.png' %}{% endblock imagen%})">
+    <div class="overlay"></div>
+    <div class="site-heading">
+
+    </div>
+</header>
+{% endblock header%} {%block content%}
+
+<div class="container-fluid">
+    {% if user.is_authenticated == False %}
+    <a class="btn btn-sm btn-warning" href="{% url 'signup'%}">Conviértete en un autor</a><br>
+    <small>Comparte tu conocimiento al mundo!</small>
+    <br class="p-0 m-1"> {% endif %}
+
+    <!--Barra para buscar-->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 search">
+                <form method="get">
+                    <div id="custom-search-input">
+                        <div class="input-group col-md-12">
+                            <input type="text" class="form-control" placeholder="Buscar autores..." value="{{request.GET.buscar}}" name="buscar" autocomplete="off">
+                            <span class="input-group-list">
+                                <button type="submit" class="btn btn-info">Buscar</button>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br class="p-0 m-1">
+    <!--End barra buscar-->
+
+    <div class="row">
+        <h5>Lista de Autores:</h5>
+        <div class="table-responsive">
+            <div class="card-header bg-info p-1">
+
+            </div>
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Foto</th>
+                        <th scope="col">Nombres</th>
+                        <th scope="col">Organización</th>
+                        <th scope="col">Inicio</th>
+                        <th scope="col">Ver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for profile in custumusers %} {% if profile.get_full_name and profile.universidad and profile.date_creation != None %}
+                    <tr>
+                        <td><img src="{{profile.photo}}" alt="{{profile.photo}}" class="mr-3 mt-3 rounded-circle" style="width:60px;height: 60px;"></td>
+                        <td>{{profile.get_full_name}}</td>
+                        <td>{{profile.universidad}}</td>
+                        <td>{{profile.date_creation}}</td>
+                        <td class="text-center"><a class="btn btn-sm btn-info" href="{% url 'profile_detail' profile.slug %}">Ver</a></td>
+                    </tr>
+                    {% endif %} {% endfor %}
+                </tbody>
+                {% if user.is_authenticated%} {% if user.universidad == None %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                    <strong>Hola {{user.first_name}}!</strong> <br> Si aún no apareces en esta sección es debido a que aún no completas tu perfil con los campos universidad/organización y pequeña descripción de tu perfil. La universidad es referencial,
+                    puedes agregar tu organización (empresa, trabajo, etc) <a class="btn btn-sm btn-warning" href="{% url  'profile_edit' user.slug %}">Editar perfil</a>
+                </div>
+                {% endif %} {% endif%}
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{%endblock content%} {% block flecha %} {% endblock flecha %}
