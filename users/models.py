@@ -3,6 +3,8 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from tinymce.models import HTMLField
+from django.dispatch import receiver
+from allauth.account.signals import user_signed_up
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -28,6 +30,11 @@ class CustomUser(AbstractUser):
         self.slug = slugify(self.username)
         super(CustomUser, self).save(*args, **kwargs)
     
+    @receiver(user_signed_up)
+    def create_user_profile(self, user, **kwargs):
+        profile =CustomUser.objects.create(user=user)
+        profile.save()
+
     class Meta:
         ordering = ['date_creation']
 

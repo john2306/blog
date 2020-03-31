@@ -24,7 +24,6 @@ SECRET_KEY = 'w=9!b0oa#lrks_&v@iiuozoq69&ev-(pt_t&**108e%o=7kaeo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -33,13 +32,18 @@ INSTALLED_APPS = [
     'pages.apps.PagesConfig',
     'articles.apps.ArticlesConfig',
     'authors.apps.AuthorsConfig',
-    'projects.apps.ProjectsConfig',
+    'projects.apps.ProjectsConfig', #new
 
 
     #3rd Party
     'tinymce',
     'crispy_forms', 
     'import_export',
+    'allauth', #new
+    'allauth.account', #new
+    'allauth.socialaccount', #new
+    'allauth.socialaccount.providers.facebook', #new
+    'allauth.socialaccount.providers.google', #new
 
 
     #Admin contrib
@@ -49,7 +53,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 ]
+SITE_ID = 1 #new
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,7 +88,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'newspaper.wsgi.application'
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -101,6 +106,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    # Necesario para logear por username en Django admin, sin importar allauth
+    'django.contrib.auth.backends.ModelBackend',
+    
+    # Metodo de autenticación especifico de allauth, como logear por email
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -140,12 +152,23 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'hmatrix.global@gmail.com'
 EMAIL_HOST_PASSWORD = 'qazwsx,.-UNI2020'
 
-ADMINS = (
-    ('John Mendoza', 'johnmendozauni@gmail.com')
-)
-
-MANAGERS = (
-    ('John Mendoza', 'johnmendozauni@gmail.com')
-)
-
-#CONFIG_EDITOR
+ACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': 'path.to.callable',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.12',
+    }
+}

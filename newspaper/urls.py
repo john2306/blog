@@ -26,6 +26,6 @@ urlpatterns = [
     path('authors/', include('authors.urls')), #new
     path('projects/', include('projects.urls')), #new
     path('', include('pages.urls')), #new
-    
+    path('accounts/', include('allauth.urls')),
 ]
 
